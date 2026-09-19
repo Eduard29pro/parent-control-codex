@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Parent Control</string>
+    <string name="admin_description">Родительские ограничения яркости и громкости.</string>
+    <string name="pin_setup_title">Создайте PIN родителя</string>
+    <string name="pin_unlock_title">Введите PIN родителя</string>
+    <string name="pin_change_title">Измените PIN</string>
+    <string name="pin_label">PIN</string>
+    <string name="pin_confirm_label">Подтвердите PIN</string>
+    <string name="pin_invalid">PIN должен содержать от 4 до 8 цифр.</string>
+    <string name="pin_mismatch">PIN и подтверждение не совпадают.</string>
+    <string name="pin_wrong">Неверный PIN.</string>
+    <string name="pin_wait">Подождите 30 секунд</string>
+    <string name="continue_label">Продолжить</string>
+    <string name="limits_title">Ограничения устройства</string>
+    <string name="owner_active">Защита активна: Device Owner</string>
+    <string name="owner_inactive">Требуется настройка управления устройством</string>
+    <string name="owner_active_help">Сервис наблюдения работает в защищённом режиме.</string>
+    <string name="owner_inactive_help">Для более надёжной работы настройте Device Owner через ADB.</string>
+    <string name="limits_enabled">Ограничения включены</string>
+    <string name="brightness_max">Максимальная яркость</string>
+    <string name="volume_max">Максимальная громкость медиа</string>
+    <string name="percent_value">%1$d%%</string>
+    <string name="write_settings_required">Разрешите изменение системных настроек для управления яркостью.</string>
+    <string name="open_write_settings">Открыть разрешение</string>
+    <string name="save_apply">Сохранить и применить</string>
+    <string name="saved">Ограничения сохранены и применены.</string>
+    <string name="change_pin">Изменить PIN</string>
+    <string name="device_setup_hint">Device Owner: adb shell dpm set-device-owner --user current --name &quot;Parent Control&quot; ru.makdigital.parentcontrol/.policy.AdminReceiver</string>
+</resources>
