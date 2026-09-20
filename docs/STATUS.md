@@ -16,5 +16,5 @@
 - [x] DeviceAdminService lifecycle for Device Owner mode
 - [x] Unit tests for PIN validation and conversion helpers
 - [x] Gradle wrapper added; `assembleDebug`, unit tests, and lint all pass
-- [ ] Android 29 + 35/36 emulator verification
-- [ ] Real-device reboot verification
+- [x] Android 36 emulator verification: PIN setup/unlock, settings persistence, WRITE_SETTINGS flow, brightness/volume clamp-on-save all confirmed manually
+- [x] Real-device (emulator) reboot verification: BootReceiver reapplies the configured caps after `adb reboot` without opening the UI
