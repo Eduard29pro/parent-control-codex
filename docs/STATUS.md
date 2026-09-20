@@ -15,6 +15,6 @@
 - [x] Permission/setup UX completion
 - [x] DeviceAdminService lifecycle for Device Owner mode
 - [x] Unit tests for PIN validation and conversion helpers
+- [x] Gradle wrapper added; `assembleDebug`, unit tests, and lint all pass
 - [ ] Android 29 + 35/36 emulator verification
 - [ ] Real-device reboot verification
-- [ ] lint + assembleDebug clean

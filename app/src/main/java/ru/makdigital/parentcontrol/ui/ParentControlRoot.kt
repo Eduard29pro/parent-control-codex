@@ -52,6 +52,9 @@ private fun PinScreen(mode: PinMode, onSuccess: (String) -> Boolean) {
         PinMode.Unlock -> stringResource(R.string.pin_unlock_title)
         PinMode.Change -> stringResource(R.string.pin_change_title)
     }
+    val invalidMessage = stringResource(R.string.pin_invalid)
+    val mismatchMessage = stringResource(R.string.pin_mismatch)
+    val wrongMessage = stringResource(R.string.pin_wrong)
     Surface(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.Center) {
             Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineLarge)
@@ -67,12 +70,12 @@ private fun PinScreen(mode: PinMode, onSuccess: (String) -> Boolean) {
             Button(onClick = {
                 val valid = when {
                     locked -> false
-                    !PinManager.isValidPin(pin) -> { error = stringResource(R.string.pin_invalid); false }
-                    mode != PinMode.Unlock && pin != confirmation -> { error = stringResource(R.string.pin_mismatch); false }
+                    !PinManager.isValidPin(pin.toCharArray()) -> { error = invalidMessage; false }
+                    mode != PinMode.Unlock && pin != confirmation -> { error = mismatchMessage; false }
                     else -> true
                 }
                 if (valid) {
-                    if (!onSuccess(pin)) { error = stringResource(R.string.pin_wrong); failedAttempts++ }
+                    if (!onSuccess(pin)) { error = wrongMessage; failedAttempts++ }
                 }
                 if (mode == PinMode.Unlock && error != null && failedAttempts >= 3) lockedUntil = System.currentTimeMillis() + 30_000L
             }, enabled = !locked && pin.isNotEmpty(), modifier = Modifier.fillMaxWidth()) {
@@ -89,6 +92,7 @@ private fun PinField(label: String, value: String, onValueChange: (String) -> Un
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword), modifier = Modifier.fillMaxWidth())
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsScreen(vm: MainViewModel, onChangePin: () -> Unit) {
     val saved by vm.settings.collectAsStateWithLifecycle()
