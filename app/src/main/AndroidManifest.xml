@@ -20,6 +20,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".LockActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.ParentControl" />
+
         <receiver
             android:name=".policy.AdminReceiver"
             android:description="@string/admin_description"

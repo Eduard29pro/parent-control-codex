@@ -25,5 +25,23 @@
     <string name="save_apply">Сохранить и применить</string>
     <string name="saved">Ограничения сохранены и применены.</string>
     <string name="change_pin">Изменить PIN</string>
-    <string name="device_setup_hint">Device Owner: adb shell dpm set-device-owner --user current --name &quot;Parent Control&quot; ru.makdigital.parentcontrol/.policy.AdminReceiver</string>
+    <string name="device_setup_hint">Device Owner: adb shell dpm set-device-owner --user current ru.makdigital.parentcontrol/.policy.AdminReceiver</string>
+    <string name="minutes_value">%1$d мин</string>
+    <string name="seconds_value">%1$d сек</string>
+    <string name="screen_time_title">Время использования</string>
+    <string name="screen_time_requires_owner">Требуется режим Device Owner.</string>
+    <string name="screen_time_enabled">Ограничение по времени включено</string>
+    <string name="screen_time_active_minutes">Активное время</string>
+    <string name="screen_time_break_minutes">Перерыв</string>
+    <string name="screen_time_reduce_minutes">Сокращение паузы за верный ответ</string>
+    <string name="screen_time_hard_lock_minutes">Жёсткая блокировка</string>
+    <string name="screen_time_cooldown_seconds">Пауза между попытками</string>
+    <string name="lock_title">Перерыв</string>
+    <string name="lock_break_remaining">Осталось: %1$d:%2$02d</string>
+    <string name="lock_hard_lock_message">Подождите немного — скоро можно будет решить пример и сократить паузу.</string>
+    <string name="lock_challenge_prompt">Сколько будет %1$d + %2$d?</string>
+    <string name="lock_answer_label">Ответ</string>
+    <string name="lock_answer_wrong">Неверно, попробуй ещё раз.</string>
+    <string name="lock_submit">Проверить</string>
+    <string name="lock_cooldown_message">Подождите пару секунд перед следующей попыткой.</string>
 </resources>

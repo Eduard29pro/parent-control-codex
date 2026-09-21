@@ -18,4 +18,20 @@ class DevicePolicyController(private val context: Context) {
             true
         }.getOrDefault(false)
     }
+
+    fun setLockTaskPackages(packages: Array<String>): Boolean {
+        if (!isDeviceOwner()) return false
+        return runCatching {
+            dpm.setLockTaskPackages(admin, packages)
+            true
+        }.getOrDefault(false)
+    }
+
+    fun setLockTaskFeatures(features: Int): Boolean {
+        if (!isDeviceOwner()) return false
+        return runCatching {
+            dpm.setLockTaskFeatures(admin, features)
+            true
+        }.getOrDefault(false)
+    }
 }

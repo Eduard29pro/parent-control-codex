@@ -9,10 +9,13 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import ru.makdigital.parentcontrol.data.ScreenTimeRepository
 import ru.makdigital.parentcontrol.data.SettingsRepository
 import ru.makdigital.parentcontrol.model.LimitSettings
+import ru.makdigital.parentcontrol.model.ScreenTimeSettings
 import ru.makdigital.parentcontrol.policy.DevicePolicyController
 import ru.makdigital.parentcontrol.policy.LimitsEnforcer
+import ru.makdigital.parentcontrol.policy.ScreenTimeEngine
 import ru.makdigital.parentcontrol.security.PinManager
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
@@ -20,8 +23,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     private val pin = PinManager(app)
     private val enforcer = LimitsEnforcer(app)
     private val policy = DevicePolicyController(app)
+    private val screenTimeRepo = ScreenTimeRepository(app)
+    private val screenTimeEngine = ScreenTimeEngine(app)
 
     val settings = repo.settings.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), LimitSettings())
+    val screenTimeSettings = screenTimeRepo.config.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ScreenTimeSettings())
     fun hasPin() = pin.hasPin()
     fun setPin(value: String) = pin.setPin(value.toCharArray())
     fun changePin(value: String) = pin.setPin(value.toCharArray())
@@ -37,5 +43,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun save(value: LimitSettings) = viewModelScope.launch {
         repo.save(value)
         enforcer.applyNow(value)
+    }
+
+    fun saveScreenTime(value: ScreenTimeSettings) = viewModelScope.launch {
+        screenTimeRepo.saveConfig(value)
+        if (value.enabled) screenTimeEngine.tick() else screenTimeEngine.forceDisable()
     }
 }

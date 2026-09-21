@@ -1,7 +1,9 @@
 package ru.makdigital.parentcontrol.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.makdigital.parentcontrol.MainViewModel
 import ru.makdigital.parentcontrol.R
 import ru.makdigital.parentcontrol.model.LimitSettings
+import ru.makdigital.parentcontrol.model.ScreenTimeSettings
 import ru.makdigital.parentcontrol.security.PinManager
 
 @Composable
@@ -102,7 +105,10 @@ private fun SettingsScreen(vm: MainViewModel, onChangePin: () -> Unit) {
     var savedMessage by remember { mutableStateOf(false) }
     val owner = vm.isDeviceOwner(); val canWrite = vm.canWriteSettings(); val context = LocalContext.current
     Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.limits_title)) }) }) { pad ->
-        Column(Modifier.padding(pad).padding(20.dp).fillMaxSize(), verticalArrangement = Arrangement.spacedBy(18.dp)) {
+        Column(
+            Modifier.padding(pad).padding(20.dp).fillMaxSize().verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(18.dp),
+        ) {
             Card(Modifier.fillMaxWidth()) { Column(Modifier.padding(16.dp)) {
                 Text(stringResource(if (owner) R.string.owner_active else R.string.owner_inactive), style = MaterialTheme.typography.titleMedium)
                 Text(stringResource(if (owner) R.string.owner_active_help else R.string.owner_inactive_help))
@@ -118,6 +124,7 @@ private fun SettingsScreen(vm: MainViewModel, onChangePin: () -> Unit) {
             }
             Button(onClick = { vm.save(LimitSettings(enabled, brightness.toInt(), volume.toInt())); savedMessage = true }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.save_apply)) }
             if (savedMessage) Text(stringResource(R.string.saved), color = MaterialTheme.colorScheme.primary)
+            ScreenTimeCard(vm, owner)
             TextButton(onClick = onChangePin) { Text(stringResource(R.string.change_pin)) }
             Text(stringResource(R.string.device_setup_hint), style = MaterialTheme.typography.bodySmall)
         }
@@ -127,5 +134,62 @@ private fun SettingsScreen(vm: MainViewModel, onChangePin: () -> Unit) {
 @Composable
 private fun LimitSlider(label: String, value: Float, range: ClosedFloatingPointRange<Float>, onChange: (Float) -> Unit) {
     Column { Row { Text(label, Modifier.weight(1f)); Text(stringResource(R.string.percent_value, value.toInt())) }
+        Slider(value, onChange, valueRange = range, modifier = Modifier.fillMaxWidth()) }
+}
+
+@Composable
+private fun ScreenTimeCard(vm: MainViewModel, owner: Boolean) {
+    val saved by vm.screenTimeSettings.collectAsStateWithLifecycle()
+    var enabled by remember(saved) { mutableStateOf(saved.enabled) }
+    var activeMinutes by remember(saved) { mutableFloatStateOf(saved.activeMinutes.toFloat()) }
+    var breakMinutes by remember(saved) { mutableFloatStateOf(saved.breakMinutes.toFloat()) }
+    var reduceMinutes by remember(saved) { mutableFloatStateOf(saved.reduceBreakMinutesPerCorrectAnswer.toFloat()) }
+    var hardLockMinutes by remember(saved) { mutableFloatStateOf(saved.hardLockMinutes.toFloat()) }
+    var cooldownSeconds by remember(saved) { mutableFloatStateOf(saved.challengeCooldownSeconds.toFloat()) }
+    var savedMessage by remember { mutableStateOf(false) }
+
+    Card(Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(stringResource(R.string.screen_time_title), style = MaterialTheme.typography.titleMedium)
+            if (!owner) {
+                Text(stringResource(R.string.screen_time_requires_owner))
+            } else {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(R.string.screen_time_enabled), Modifier.weight(1f)); Switch(enabled, { enabled = it })
+                }
+                MinutesSlider(stringResource(R.string.screen_time_active_minutes), activeMinutes, 15f..180f) { activeMinutes = it }
+                MinutesSlider(stringResource(R.string.screen_time_break_minutes), breakMinutes, 5f..60f) { breakMinutes = it }
+                MinutesSlider(stringResource(R.string.screen_time_reduce_minutes), reduceMinutes, 1f..15f) { reduceMinutes = it }
+                val maxHardLock = (breakMinutes.toInt() - 1).coerceAtLeast(1).toFloat()
+                MinutesSlider(stringResource(R.string.screen_time_hard_lock_minutes), hardLockMinutes.coerceAtMost(maxHardLock), 1f..maxHardLock) { hardLockMinutes = it }
+                SecondsSlider(stringResource(R.string.screen_time_cooldown_seconds), cooldownSeconds, 3f..10f) { cooldownSeconds = it }
+                Button(onClick = {
+                    vm.saveScreenTime(
+                        ScreenTimeSettings(
+                            enabled = enabled,
+                            activeMinutes = activeMinutes.toInt(),
+                            breakMinutes = breakMinutes.toInt(),
+                            reduceBreakMinutesPerCorrectAnswer = reduceMinutes.toInt(),
+                            hardLockMinutes = hardLockMinutes.toInt(),
+                            challengeCooldownSeconds = cooldownSeconds.toInt(),
+                        )
+                    )
+                    savedMessage = true
+                }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.save_apply)) }
+                if (savedMessage) Text(stringResource(R.string.saved), color = MaterialTheme.colorScheme.primary)
+            }
+        }
+    }
+}
+
+@Composable
+private fun MinutesSlider(label: String, value: Float, range: ClosedFloatingPointRange<Float>, onChange: (Float) -> Unit) {
+    Column { Row { Text(label, Modifier.weight(1f)); Text(stringResource(R.string.minutes_value, value.toInt())) }
+        Slider(value, onChange, valueRange = range, modifier = Modifier.fillMaxWidth()) }
+}
+
+@Composable
+private fun SecondsSlider(label: String, value: Float, range: ClosedFloatingPointRange<Float>, onChange: (Float) -> Unit) {
+    Column { Row { Text(label, Modifier.weight(1f)); Text(stringResource(R.string.seconds_value, value.toInt())) }
         Slider(value, onChange, valueRange = range, modifier = Modifier.fillMaxWidth()) }
 }

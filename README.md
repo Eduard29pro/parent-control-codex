@@ -18,14 +18,16 @@ Core requirements:
 ## Current repository state
 This pack now includes an Android Studio Kotlin/Compose skeleton under `app/`. It is intentionally a scaffold, not a claim of production-ready enforcement. Codex should finish it using `docs/CODEX_PROMPT.md`.
 
+In addition to the brightness/volume caps, the app has a Device-Owner-only **screen-time cycle**: after a configurable amount of active screen time, the device shows an unremovable, Lock Task-based break screen (configurable duration) that a child can partially shorten by solving simple math problems, after an initial non-skippable hard-lock window. See `docs/STATUS.md` for the full feature list and remaining phases (scheduling, per-app budgets, QR provisioning).
+
 ### Development Device Owner command
 After installing the debug APK on an eligible test device/user, the admin component is:
 
 ```bash
-adb shell dpm set-device-owner --user current --name "Parent Control" ru.makdigital.parentcontrol/.policy.AdminReceiver
+adb shell dpm set-device-owner --user current ru.makdigital.parentcontrol/.policy.AdminReceiver
 ```
 
-Device Owner provisioning has Android state prerequisites. If the command is rejected, use a fresh/eligible emulator or test device and follow current Android managed-device provisioning requirements.
+Device Owner provisioning has Android state prerequisites. If the command is rejected, use a fresh/eligible emulator or test device and follow current Android managed-device provisioning requirements. Note: some Android versions no longer accept the `--name` option on this command; omit it if you see `Unknown option: --name`.
 
 ### Build and test
 Open the repository root in Android Studio, or run:
